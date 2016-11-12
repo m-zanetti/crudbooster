@@ -13,14 +13,16 @@ class CRUDBoosterServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot()
-    {        
+    {
         $this->publishes([  __DIR__.'/configs/crudbooster.php' => config_path('crudbooster.php')],'cb_config');
-        
+
         $this->loadViewsFrom(__DIR__.'/views', 'crudbooster');
-        
+
+        $this->loadTranslationsFrom(__DIR__.'/langs', 'crudbooster');
+
         $this->publishes([
             __DIR__.'/assets' => public_path('vendor/crudbooster'),
-        ], 'cb_public');             
+        ], 'cb_public');
 
         $this->publishes([
             __DIR__.'/database' => base_path('database'),
@@ -34,11 +36,11 @@ class CRUDBoosterServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/laravel-filemanager/public' => public_path('vendor/laravel-filemanager'),
-        ],'cb_lfm');        
+        ],'cb_lfm');
 
         $this->publishes([
             __DIR__.'/laravel-filemanager/src/config/lfm.php' => config_path('lfm.php'),
-        ],'cb_lfm_config');        
+        ],'cb_lfm_config');
 
         $this->publishes([
             __DIR__.'/laravel-filemanager/src/views/script.blade.php' => resource_path('views/vendor/laravel-filemanager/script.blade.php'),
@@ -47,15 +49,15 @@ class CRUDBoosterServiceProvider extends ServiceProvider
         if(!file_exists(app_path('Http/Controllers/CBHook.php'))) {
             $this->publishes([  __DIR__.'/controllers/CBHook.php' => app_path('Http/Controllers/CBHook.php')],'cb_hook');
         }
-                    
-        require __DIR__.'/validations/validation.php';        
-        require __DIR__.'/routes.php';    
-            
+
+        require __DIR__.'/validations/validation.php';
+        require __DIR__.'/routes.php';
+
         $this->app->booted(function () {
             $schedule = $this->app->make(\Illuminate\Console\Scheduling\Schedule::class);
             $schedule->command('mailqueues')->cron("* * * * * *");
-        });    
-        
+        });
+
     }
 
     /**
@@ -64,8 +66,8 @@ class CRUDBoosterServiceProvider extends ServiceProvider
      * @return void
      */
     public function register()
-    {                                   
-        require __DIR__.'/helpers/Helper.php';      
+    {
+        require __DIR__.'/helpers/Helper.php';
 
         $this->app['crudbooster'] = $this->app->share(function ()
         {
@@ -73,7 +75,7 @@ class CRUDBoosterServiceProvider extends ServiceProvider
         });
 
         $this->commands([
-            commands\Mailqueues::class            
+            commands\Mailqueues::class
         ]);
     }
 }
